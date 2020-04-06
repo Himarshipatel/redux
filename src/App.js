@@ -1,24 +1,42 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React,{useRef} from 'react';
+//import './App.css';
+import {useSelector,useDispatch} from 'react-redux';
+import {increment,decrement,addUser,removeUser} from "./actions";
 
-function App() {
+const App = () => {
+  
+  const count = useSelector(state=>state.counterReducer);
+  const users = useSelector(state=>state.userReducer);
+  const dispatch = useDispatch();
+  const userRef = useRef(null);
+  
+  const handelSubmit = (e) => {
+    e.preventDefault();
+
+    dispatch(addUser(userRef.current.value));
+    userRef.current.value="";
+  };
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>counter</h1>
+     <button onClick={()=>dispatch(increment())}>+</button>
+      {count}
+     <button onClick={()=>dispatch(decrement())}>-</button>
+     <h1>User</h1>
+      <form onSubmit={handelSubmit}> 
+        <input type="text" placeholder="username" ref={userRef} />
+      </form>
+      <ul>
+        {users.map((user,index)=>(
+          <li key={index}>
+            {user.name}
+           <button onClick={()=>dispatch(removeUser(index))}>Delete</button>
+          </li>
+          
+        ))}
+      </ul>
+
     </div>
   );
 }
